@@ -17,6 +17,7 @@ window.UNIVERSE = {
     bellatrix: { name: 'Беллатриса Лестрейндж', image: 'assets/characters/bellatrix.svg', effect: 'dark-flare', phrases: ['Немного безумной магии? Этот вечер станет незабываемым.', 'У твоего очарования определённо есть тёмная сторона.', 'Самые интересные заклинания не найдёшь в учебниках.'] },
     orochimaru: { name: 'Орочимару', image: 'assets/characters/orochimaru.svg', effect: 'serpent-aura', phrases: ['Любопытство открывает двери даже в самые тайные миры.', 'У тебя занятная сила… Никогда её не прячь.', 'Перемены — лишь начало новой истории.'] },
     levi: { name: 'Леви Аккерман', image: 'assets/characters/levi.svg', effect: 'steel-wind', phrases: ['Держись рядом. Остальное я беру на себя.', 'Не трать силы на сомнения. Сделай свой выбор.', 'Сначала наведём порядок. Потом спасём мир.'] },
+    ghostface: { name: 'Ghostface', image: 'assets/characters/ghostface.svg', effect: 'phone-echo', phrases: ['Какой твой любимый фильм ужасов?', 'Неожиданный звонок? Это всего лишь приглашение в ещё один мир.', 'Тише… Самое интересное в этой истории ещё впереди.'] },
     voldemort: { name: 'Волан-де-Морт', image: 'assets/characters/voldemort.svg', effect: 'spell', phrases: ['Есть магия сильнее любых заклинаний. Твоя.', 'Даже Тёмный Лорд не устоит перед твоим обаянием.'] }
   }
 };
