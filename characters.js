@@ -18,6 +18,8 @@ window.UNIVERSE = {
     orochimaru: { name: 'Орочимару', image: 'assets/characters/orochimaru.svg', effect: 'serpent-aura', phrases: ['Любопытство открывает двери даже в самые тайные миры.', 'У тебя занятная сила… Никогда её не прячь.', 'Перемены — лишь начало новой истории.'] },
     levi: { name: 'Леви Аккерман', image: 'assets/characters/levi.svg', effect: 'steel-wind', phrases: ['Держись рядом. Остальное я беру на себя.', 'Не трать силы на сомнения. Сделай свой выбор.', 'Сначала наведём порядок. Потом спасём мир.'] },
     ghostface: { name: 'Ghostface', image: 'assets/characters/ghostface.svg', effect: 'phone-echo', phrases: ['Какой твой любимый фильм ужасов?', 'Неожиданный звонок? Это всего лишь приглашение в ещё один мир.', 'Тише… Самое интересное в этой истории ещё впереди.'] },
+    chester: { name: 'Честер Беннингтон', image: 'assets/characters/chester.svg', effect: 'rock-echo', phrases: ['Пусть твой голос звучит. В нём есть сила.', 'Иногда музыка говорит за нас. Просто слушай и чувствуй.', 'Даже тихий свет способен осветить целый мир.'] },
+    crowley: { name: 'Кроули', image: 'assets/characters/crowley.svg', effect: 'demon-spark', phrases: ['Ну здравствуй, дорогая. Обсудим маленькую сделку?', 'Лоси, белки… А ты явно самая интересная в этой компании.', 'Король Ада к вашим услугам. Только без лишнего героизма.'] },
     voldemort: { name: 'Волан-де-Морт', image: 'assets/characters/voldemort.svg', effect: 'spell', phrases: ['Есть магия сильнее любых заклинаний. Твоя.', 'Даже Тёмный Лорд не устоит перед твоим обаянием.'] }
   }
 };
