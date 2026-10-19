@@ -173,6 +173,7 @@
       }, { threshold: 0 }).observe(scene);
     }
   }
+  document.addEventListener('universe-pause', () => stopActions.forEach(stop => stop()));
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopActions.forEach(stop => stop());
   });
