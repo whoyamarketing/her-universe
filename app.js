@@ -2,6 +2,7 @@
   'use strict';
   document.documentElement.classList.add('js');
   const config = window.UNIVERSE;
+  document.getElementById('personal-title').textContent = config.personalTitle;
   document.getElementById('personal-message').textContent = config.personalMessage;
   let soundEnabled = false, audio;
   const stopActions = new Set();

@@ -20,3 +20,5 @@ button.scream-phone{color:#e34b4b;border:0;background:none;padding:10px;text-ali
 #messages-next:disabled{opacity:.65;cursor:default;font-variant-numeric:tabular-nums}
 
 button.scream-phone span{color:#ac9d95;text-shadow:none}
+
+.letter{max-width:660px}.letter #personal-title{font:400 28px/1.4 Georgia,serif;color:#e0c6b5;margin:24px 0 20px}.letter #personal-message{white-space:pre-line;font-size:20px;line-height:1.85;text-align:left}@media(max-width:760px){.letter #personal-title{font-size:24px}.letter #personal-message{font-size:18px;line-height:1.8}}
