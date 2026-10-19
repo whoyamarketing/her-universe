@@ -9,6 +9,7 @@
     soundEnabled = enabled;
     soundButton.setAttribute('aria-pressed', String(enabled));
     soundButton.querySelector('span').textContent = enabled ? 'Звук вкл.' : 'Звук выкл.';
+    document.dispatchEvent(new CustomEvent('universe-sound', { detail: enabled }));
   }
   function tone(index = 0) {
     if (!soundEnabled) return;
@@ -48,6 +49,7 @@
     container.append(button, bubble);
     let count = 0, timer, effectTimer;
     let running = false;
+    container.stopRecording = stopRecording;
     const recording = character.audio ? document.createElement('audio') : null;
     function stopRecording() {
       running = false;
@@ -110,12 +112,73 @@
       if (event.key === 'Escape') {stopRecording();clearTimeout(timer);bubble.hidden = true;button.setAttribute('aria-expanded', 'false');}
     });
   });
+  const phone = document.querySelector('.scream-phone');
+  if (phone && config.phone) {
+    const scene = document.getElementById('scream');
+    const ring = document.createElement('audio');
+    const voice = document.createElement('audio');
+    ring.src = config.phone.ringtone; voice.src = config.phone.voice;
+    ring.dataset.phoneAudio = 'ring'; voice.dataset.phoneAudio = 'voice';
+    ring.preload = voice.preload = 'none';
+    ring.loop = true; ring.volume = .55; voice.volume = .8;
+    scene.append(ring, voice);
+    let visible = false, answered = false, generation = 0;
+    const label = phone.querySelector('span');
+    function pause(track) { track.pause(); track.currentTime = 0; }
+    function resetPhone() {
+      generation++;
+      pause(ring); pause(voice); answered = false;
+      phone.classList.remove('ringing', 'on-call');
+      phone.setAttribute('aria-pressed', 'false');
+      phone.setAttribute('aria-label', 'Ответить на звонок Ghostface');
+      label.textContent = 'ОТВЕТИТЬ НА ЗВОНОК';
+    }
+    function startRing() {
+      if (!visible || !soundEnabled || answered || document.hidden || !ring.paused) return;
+      const request = ++generation;
+      phone.classList.add('ringing'); label.textContent = 'ВХОДЯЩИЙ ВЫЗОВ…';
+      ring.play().catch(error => {
+        if (request !== generation || error.name === 'AbortError') return;
+        phone.classList.remove('ringing'); label.textContent = 'НАЖМИ, ЧТОБЫ ОТВЕТИТЬ';
+      });
+    }
+    stopActions.add(resetPhone);
+    phone.addEventListener('click', () => {
+      if (answered) { resetPhone(); return; }
+      generation++; answered = true; pause(ring);
+      setSound(true);
+      phone.classList.remove('ringing'); phone.classList.add('on-call');
+      phone.setAttribute('aria-pressed', 'true');
+      phone.setAttribute('aria-label', 'Остановить голос Ghostface');
+      label.textContent = 'GHOSTFACE НА ЛИНИИ…';
+      const request = generation;
+      voice.play().catch(error => {
+        if (request !== generation || error.name === 'AbortError') return;
+        resetPhone(); label.textContent = 'НЕ УДАЛОСЬ ВОСПРОИЗВЕСТИ. ПОВТОРИТЬ?';
+      });
+    });
+    phone.addEventListener('keydown', event => { if (event.key === 'Escape') resetPhone(); });
+    voice.addEventListener('ended', () => { resetPhone(); label.textContent = 'ЗВОНОК ЗАВЕРШЁН · ПОВТОРИТЬ?'; });
+    for (const track of [ring, voice]) track.addEventListener('error', () => {
+      resetPhone(); label.textContent = 'ЗВУК НЕДОСТУПЕН · ПОВТОРИТЬ?';
+    });
+    document.addEventListener('universe-sound', event => {
+      if (event.detail) startRing(); else resetPhone();
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) startRing(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => {
+        visible = entries[0].isIntersecting;
+        if (visible) startRing(); else resetPhone();
+      }, { threshold: 0 }).observe(scene);
+    }
+  }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopActions.forEach(stop => stop());
   });
   if ('IntersectionObserver' in window) {
     const actionObserver = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (!entry.isIntersecting) stopActions.forEach(stop => stop());
+      if (!entry.isIntersecting) entry.target.stopRecording?.();
     }));
     document.querySelectorAll('[data-character] audio').forEach(el => actionObserver.observe(el.parentElement));
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {

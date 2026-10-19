@@ -1,6 +1,7 @@
 // Добавляйте героев и фразы здесь. Для нового героя добавьте в HTML .character с data-character="id".
 window.UNIVERSE = {
   personalMessage: 'Здесь однажды появятся самые важные слова. Те, которые хочется сказать только тебе.',
+  phone: { ringtone: 'assets/audio/phone-ring.mp3', voice: 'assets/audio/ghostface-hello.mp3' },
   characters: {
     spider: { name: 'Человек-паук', image: 'assets/characters/spider.svg', effect: 'web-pulse', phrases: ['Эй! В любой вселенной ты — удивительная. 🕸', 'С большой любовью приходит большое счастье.', 'Я рядом. Даже если немного вверх ногами.'] },
     naruto: { name: 'Наруто', image: 'assets/characters/naruto.svg', effect: 'chakra', phrases: ['Никогда не сдавайся. Это твой путь ниндзя! 🍃', 'Твоя улыбка ярче любого расенгана!', 'Верь в себя. Я уже верю в тебя!'] },
