@@ -1,6 +1,7 @@
 // Добавляйте героев и фразы здесь. Для нового героя добавьте в HTML .character с data-character="id".
 window.UNIVERSE = {
   personalMessage: 'Здесь однажды появятся самые важные слова. Те, которые хочется сказать только тебе.',
+  birthdaySchedule: { start: '2026-10-20T10:00:00+03:00', end: '2026-10-20T16:00:00+03:00', firstBatch: 5, intervalMs: 10000 },
   phone: { ringtone: 'assets/audio/phone-ring.mp3', voice: 'assets/audio/ghostface-hello.mp3' },
   characters: {
     spider: { birthday: "С днём рождения! Желаю ловить счастливые моменты так же ловко, как я — паутину между небоскрёбами. Ты удивительная в любой вселенной! 🕸", name: 'Человек-паук', image: 'assets/characters/spider.svg', effect: 'web-pulse', phrases: ['Эй! В любой вселенной ты — удивительная. 🕸', 'С большой любовью приходит большое счастье.', 'Я рядом. Даже если немного вверх ногами.'] },
