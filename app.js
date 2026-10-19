@@ -4,6 +4,12 @@
   const config = window.UNIVERSE;
   document.getElementById('personal-message').textContent = config.personalMessage;
   let soundEnabled = false, audio;
+  const stopActions = new Set();
+  function setSound(enabled) {
+    soundEnabled = enabled;
+    soundButton.setAttribute('aria-pressed', String(enabled));
+    soundButton.querySelector('span').textContent = enabled ? 'Звук вкл.' : 'Звук выкл.';
+  }
   function tone(index = 0) {
     if (!soundEnabled) return;
     try {
@@ -21,9 +27,8 @@
   }
   const soundButton = document.getElementById('sound');
   soundButton.addEventListener('click', () => {
-    soundEnabled = !soundEnabled;
-    soundButton.setAttribute('aria-pressed', String(soundEnabled));
-    soundButton.querySelector('span').textContent = soundEnabled ? 'Звук вкл.' : 'Звук выкл.';
+    setSound(!soundEnabled);
+    if (!soundEnabled) stopActions.forEach(stop => stop());
     tone();
   });
   document.querySelectorAll('[data-character]').forEach((container, index) => {
@@ -42,7 +47,46 @@
     button.setAttribute('aria-controls', bubble.id);
     container.append(button, bubble);
     let count = 0, timer, effectTimer;
+    let running = false;
+    const recording = character.audio ? document.createElement('audio') : null;
+    function stopRecording() {
+      running = false;
+      if (recording) { recording.pause(); recording.currentTime = 0; }
+      img.src = character.image;
+      container.classList.remove('chainsaw-running');
+      if (recording) button.setAttribute('aria-pressed', 'false');
+    }
+    if (recording) {
+      recording.src = character.audio;
+      recording.preload = 'none';
+      recording.volume = .65;
+      container.append(recording);
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-label', 'Бубба Сойер: включить или остановить бензопилу со звуком');
+      stopActions.add(stopRecording);
+      recording.addEventListener('ended', stopRecording);
+      recording.addEventListener('error', () => {
+        stopRecording();
+        bubble.textContent = 'Не удалось загрузить звук. Попробуй ещё раз.';
+        bubble.hidden = false;
+        button.setAttribute('aria-expanded', 'true');
+      });
+    }
     button.addEventListener('click', () => {
+      if (recording && running) { stopRecording(); return; }
+      if (recording) {
+        running = true;
+        setSound(true);
+        button.setAttribute('aria-pressed', 'true');
+        container.classList.add('chainsaw-running');
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) img.src = character.activeImage;
+        recording.play().catch(() => {
+          stopRecording();
+          bubble.textContent = 'Нажми ещё раз, чтобы включить звук.';
+          bubble.hidden = false;
+          button.setAttribute('aria-expanded', 'true');
+        });
+      }
       clearTimeout(timer); clearTimeout(effectTimer);
       container.querySelectorAll('.effect-ring,.particle').forEach(el => el.remove());
       bubble.textContent = character.phrases[count++ % character.phrases.length]; bubble.hidden = false;
@@ -58,15 +102,22 @@
           part.style.setProperty('--y', `${Math.sin(angle) * 130}px`); container.append(part);
         }
       }
-      tone(index);
+      if (!recording) tone(index);
       effectTimer = setTimeout(() => {container.classList.remove('active');container.querySelectorAll('.effect-ring,.particle').forEach(el => el.remove());}, 1100);
       timer = setTimeout(() => {bubble.hidden = true;button.setAttribute('aria-expanded', 'false');}, 6500);
     });
     button.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {clearTimeout(timer);bubble.hidden = true;button.setAttribute('aria-expanded', 'false');}
+      if (event.key === 'Escape') {stopRecording();clearTimeout(timer);bubble.hidden = true;button.setAttribute('aria-expanded', 'false');}
     });
   });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopActions.forEach(stop => stop());
+  });
   if ('IntersectionObserver' in window) {
+    const actionObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (!entry.isIntersecting) stopActions.forEach(stop => stop());
+    }));
+    document.querySelectorAll('[data-character] audio').forEach(el => actionObserver.observe(el.parentElement));
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) {entry.target.classList.add('visible');observer.unobserve(entry.target);}
     }), {threshold: .12});
