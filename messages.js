@@ -7,6 +7,22 @@
   const badge = document.getElementById('message-badge');
   const status = document.getElementById('messages-status');
   const next = document.getElementById('messages-next');
+  const notificationSound = document.createElement('audio');
+  notificationSound.src = window.UNIVERSE.messageSound;
+  notificationSound.preload = 'none';
+  notificationSound.volume = .6;
+  notificationSound.dataset.messageSound = '';
+  dialog.append(notificationSound);
+  function stopNotificationSound() {
+    notificationSound.pause(); notificationSound.currentTime = 0;
+  }
+  function playNotificationSound() {
+    if (document.getElementById('sound').getAttribute('aria-pressed') !== 'true') return;
+    stopNotificationSound();
+    notificationSound.play().catch(() => { /* A blocked or unavailable sound never interrupts greetings. */ });
+  }
+  document.addEventListener('universe-sound', event => { if (!event.detail) stopNotificationSound(); });
+  document.addEventListener('universe-pause', stopNotificationSound);
   const ids = [...new Set([...document.querySelectorAll('[data-character]')].map(el => el.dataset.character))]
     .filter(id => window.UNIVERSE.characters[id]);
   const settings = window.UNIVERSE.birthdaySchedule;
@@ -69,6 +85,7 @@
     const upcoming = update();
     if (!upcoming || Date.now() < upcoming.due) return;
     append(upcoming.id, true); read.add(upcoming.id);
+    playNotificationSound();
     lastDelivered = Date.now();
     try {
       localStorage.setItem(key, JSON.stringify([...read]));
@@ -89,6 +106,7 @@
   });
   close.addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => {
+    stopNotificationSound();
     document.body.classList.remove('messages-open'); trigger.focus({preventScroll:true});
   });
   dialog.addEventListener('click', event => { if (event.target === dialog) {
@@ -96,7 +114,10 @@
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
   }});
   next.addEventListener('click', deliver);
-  document.addEventListener('visibilitychange', tick);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopNotificationSound();
+    tick();
+  });
   setInterval(tick, 1000);
   update();
 })();
