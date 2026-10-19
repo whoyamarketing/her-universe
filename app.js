@@ -5,6 +5,30 @@
   document.getElementById('personal-message').textContent = config.personalMessage;
   let soundEnabled = false, audio;
   const stopActions = new Set();
+  let activeScene = null;
+  function activateScene(scene, autoplay = true) {
+    if (scene !== activeScene) {
+      stopActions.forEach(stop => stop());
+      activeScene = scene;
+      document.dispatchEvent(new CustomEvent('universe-scene', {detail: {scene, autoplay}}));
+    }
+  }
+  function updateActiveScene() {
+    const middle = innerHeight / 2;
+    const scene = [...document.querySelectorAll('main > .scene')].find(el => {
+      const rect = el.getBoundingClientRect();
+      return rect.top <= middle && rect.bottom > middle;
+    }) || null;
+    activateScene(scene);
+  }
+  let sceneFrame = false;
+  function queueSceneUpdate() {
+    if (sceneFrame) return;
+    sceneFrame = true;
+    requestAnimationFrame(() => {sceneFrame = false; updateActiveScene();});
+  }
+  window.addEventListener('scroll', queueSceneUpdate, {passive: true});
+  window.addEventListener('resize', queueSceneUpdate);
   function setSound(enabled) {
     soundEnabled = enabled;
     soundButton.setAttribute('aria-pressed', String(enabled));
@@ -77,6 +101,7 @@
     button.addEventListener('click', () => {
       if (recording && running) { stopRecording(); return; }
       if (recording) {
+        activateScene(container.closest('.scene'), false);
         running = true;
         setSound(true);
         button.setAttribute('aria-pressed', 'true');
@@ -134,7 +159,7 @@
       label.textContent = 'ОТВЕТИТЬ НА ЗВОНОК';
     }
     function startRing() {
-      if (!visible || !soundEnabled || answered || document.hidden || !ring.paused) return;
+      if (!visible || activeScene !== scene || !soundEnabled || answered || document.hidden || document.querySelector('dialog[open]') || !ring.paused) return;
       const request = ++generation;
       phone.classList.add('ringing'); label.textContent = 'ВХОДЯЩИЙ ВЫЗОВ…';
       ring.play().catch(error => {
@@ -145,6 +170,7 @@
     stopActions.add(resetPhone);
     phone.addEventListener('click', () => {
       if (answered) { resetPhone(); return; }
+      activateScene(scene, false);
       generation++; answered = true; pause(ring);
       setSound(true);
       phone.classList.remove('ringing'); phone.classList.add('on-call');
@@ -166,13 +192,13 @@
       if (event.detail) startRing(); else resetPhone();
     });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) startRing(); });
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(entries => {
-        visible = entries[0].isIntersecting;
-        if (visible) startRing(); else resetPhone();
-      }, { threshold: 0 }).observe(scene);
-    }
+    document.addEventListener('universe-scene', event => {
+      visible = event.detail.scene === scene;
+      if (!visible) resetPhone();
+      else if (event.detail.autoplay) startRing();
+    });
   }
+  updateActiveScene();
   document.addEventListener('universe-pause', () => stopActions.forEach(stop => stop()));
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopActions.forEach(stop => stop());
