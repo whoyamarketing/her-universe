@@ -198,6 +198,25 @@
       else if (event.detail.autoplay) startRing();
     });
   }
+  Object.entries(config.sceneAudio || {}).forEach(([id, source]) => {
+    const scene = document.getElementById(id);
+    if (!scene) return;
+    const music = document.createElement('audio');
+    music.src = source; music.preload = 'none'; music.volume = .55;
+    music.dataset.sceneAudio = id;
+    scene.append(music);
+    function stopMusic() { music.pause(); music.currentTime = 0; }
+    function startMusic() {
+      if (activeScene !== scene || !soundEnabled || document.hidden || document.querySelector('dialog[open]') || !music.paused) return;
+      music.play().catch(() => { /* Browser autoplay restrictions do not interrupt the scene. */ });
+    }
+    stopActions.add(stopMusic);
+    document.addEventListener('universe-scene', event => {
+      if (event.detail.scene === scene && event.detail.autoplay) startMusic(); else stopMusic();
+    });
+    document.addEventListener('universe-sound', event => { if (event.detail) startMusic(); else stopMusic(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) startMusic(); });
+  });
   updateActiveScene();
   document.addEventListener('universe-pause', () => stopActions.forEach(stop => stop()));
   document.addEventListener('visibilitychange', () => {
