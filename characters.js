@@ -20,6 +20,7 @@ window.UNIVERSE = {
     ghostface: { name: 'Ghostface', image: 'assets/characters/ghostface.svg', effect: 'phone-echo', phrases: ['Какой твой любимый фильм ужасов?', 'Неожиданный звонок? Это всего лишь приглашение в ещё один мир.', 'Тише… Самое интересное в этой истории ещё впереди.'] },
     chester: { name: 'Честер Беннингтон', image: 'assets/characters/chester.svg', effect: 'rock-echo', phrases: ['Пусть твой голос звучит. В нём есть сила.', 'Иногда музыка говорит за нас. Просто слушай и чувствуй.', 'Даже тихий свет способен осветить целый мир.'] },
     crowley: { name: 'Кроули', image: 'assets/characters/crowley.svg', effect: 'demon-spark', phrases: ['Ну здравствуй, дорогая. Обсудим маленькую сделку?', 'Лоси, белки… А ты явно самая интересная в этой компании.', 'Король Ада к вашим услугам. Только без лишнего героизма.'] },
+    dudu: { name: 'Dudu', image: 'assets/characters/dudu.svg', effect: 'bear-hug', particle: '♡', phrases: ['My Motka Bubu'] },
     voldemort: { name: 'Волан-де-Морт', image: 'assets/characters/voldemort.svg', effect: 'spell', phrases: ['Есть магия сильнее любых заклинаний. Твоя.', 'Даже Тёмный Лорд не устоит перед твоим обаянием.'] }
   }
 };

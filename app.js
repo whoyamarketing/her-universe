@@ -52,7 +52,7 @@
       const ring = document.createElement('span'); ring.className = 'effect-ring'; container.append(ring);
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         for (let i = 0; i < 9; i++) {
-          const part = document.createElement('span'); part.className = 'particle'; part.textContent = id === 'harley' ? '♡' : '✧';
+          const part = document.createElement('span'); part.className = 'particle'; part.textContent = character.particle || (id === 'harley' ? '♡' : '✧');
           const angle = i * Math.PI * 2 / 9;
           part.style.setProperty('--x', `${Math.cos(angle) * 130}px`);
           part.style.setProperty('--y', `${Math.sin(angle) * 130}px`); container.append(part);
