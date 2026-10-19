@@ -36,7 +36,7 @@
   }
   function schedule() {
     clearTimeout(timer);
-    if (dialog.open && !document.hidden && update().length) timer = setTimeout(deliver, 5000);
+    if (dialog.open && !document.hidden && update().length) timer = setTimeout(deliver, 10000);
   }
   function deliver() {
     clearTimeout(timer);
